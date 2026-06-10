@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#1b2030">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <title>フリックマスター｜フリック入力練習</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ホーム -->
+    <section id="screen-home" class="screen">
+      <div class="home-inner">
+        <h1 class="logo">フリック<span>マスター</span></h1>
+        <p class="tagline">遊びながら、フリック入力を覚えよう</p>
+        <div class="mode-list">
+          <button class="btn mode-btn" data-mode="basic">
+            <span class="mode-name">基礎れんしゅう</span>
+            <span class="mode-desc">行を選んでガイドつきで練習</span>
+          </button>
+          <button class="btn mode-btn" data-mode="random">
+            <span class="mode-name">ランダム文字</span>
+            <span class="mode-desc">全文字からランダム出題</span>
+          </button>
+          <button class="btn mode-btn" data-mode="words">
+            <span class="mode-name">ことば</span>
+            <span class="mode-desc">単語を入力する実戦練習</span>
+          </button>
+          <button class="btn mode-btn timeattack" data-mode="timeattack">
+            <span class="mode-name">タイムアタック</span>
+            <span class="mode-desc">60秒で高スコアを狙え！</span>
+          </button>
+        </div>
+        <p class="hint">キーを押して上下左右にフリック。指を離した方向の文字が入力されます。</p>
+      </div>
+    </section>
+
+    <!-- 行選択 -->
+    <section id="screen-group" class="screen">
+      <div class="home-inner">
+        <h2 class="subtitle">どの行をれんしゅうする？</h2>
+        <div id="group-grid" class="group-grid"></div>
+        <button id="group-all" class="btn group-all-btn">ぜんぶ（あ〜わ行）</button>
+      </div>
+    </section>
+
+    <!-- プレイ -->
+    <section id="screen-play" class="screen">
+      <header class="play-header">
+        <button id="quit-btn" class="icon-btn" aria-label="やめる">✕</button>
+        <span id="play-mode-label" class="play-mode-label"></span>
+        <button id="guide-toggle" class="icon-btn guide-btn" aria-label="ガイド切替">💡</button>
+      </header>
+
+      <div id="timer-wrap" class="timer-wrap" hidden>
+        <span class="timer-label">のこり</span>
+        <span id="timer" class="timer">60.0</span>
+      </div>
+
+      <div class="prompt-area">
+        <div id="prompt" class="prompt"></div>
+      </div>
+
+      <div class="stats-bar">
+        <div class="stat"><span class="stat-label">スコア</span><span id="stat-score" class="stat-val">0</span></div>
+        <div class="stat"><span class="stat-label">コンボ</span><span id="stat-combo" class="stat-val">0</span></div>
+        <div class="stat"><span class="stat-label">正確率</span><span id="stat-accuracy" class="stat-val">100%</span></div>
+        <div class="stat"><span class="stat-label">文字/分</span><span id="stat-cpm" class="stat-val">0</span></div>
+      </div>
+
+      <div id="keyboard" class="keyboard"></div>
+    </section>
+
+    <!-- 結果 -->
+    <section id="screen-result" class="screen">
+      <div class="result-inner">
+        <h2 class="subtitle">けっか</h2>
+        <div id="result-rank" class="rank">A</div>
+        <p id="result-new" class="new-record" hidden>🎉 ハイスコア更新！</p>
+        <p class="result-mode-label"><span id="result-mode"></span></p>
+        <div class="result-grid">
+          <div class="rstat"><span>スコア</span><b id="result-score">0</b></div>
+          <div class="rstat"><span>ベスト</span><b id="result-best">0</b></div>
+          <div class="rstat"><span>正確率</span><b id="result-accuracy">0%</b></div>
+          <div class="rstat"><span>文字/分</span><b id="result-cpm">0</b></div>
+          <div class="rstat"><span>最大コンボ</span><b id="result-maxcombo">0</b></div>
+          <div class="rstat"><span>ミス</span><b id="result-mistakes">0</b></div>
+        </div>
+        <button id="retry-btn" class="btn primary-btn">ホームへ</button>
+      </div>
+    </section>
+
+  </div>
+
+  <script src="js/kana.js"></script>
+  <script src="js/flick-keyboard.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

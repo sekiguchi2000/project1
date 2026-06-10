@@ -1,0 +1,304 @@
+:root {
+  --bg: #1b2030;
+  --bg-2: #232a3d;
+  --panel: #2a3247;
+  --key: #36405c;
+  --key-press: #4d5b80;
+  --accent: #ffb340;
+  --accent-2: #4fc3f7;
+  --good: #4caf50;
+  --bad: #ef5350;
+  --text: #f2f4fb;
+  --muted: #97a1bd;
+  --radius: 14px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  margin: 0;
+  height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Noto Sans JP", "Yu Gothic", sans-serif;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#app {
+  height: 100dvh;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+}
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom);
+}
+.screen.active { display: flex; }
+
+/* --- 共通ボタン --- */
+.btn {
+  font-family: inherit;
+  color: var(--text);
+  background: var(--panel);
+  border: none;
+  border-radius: var(--radius);
+  padding: 16px;
+  font-size: 17px;
+  cursor: pointer;
+  transition: transform .08s ease, background .15s ease;
+}
+.btn:active { transform: scale(.97); }
+
+/* --- ホーム --- */
+.home-inner, .result-inner {
+  margin: auto 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  padding: 24px 0;
+}
+.logo {
+  text-align: center;
+  font-size: 40px;
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+.logo span { color: var(--accent); }
+.tagline {
+  text-align: center;
+  color: var(--muted);
+  margin: -6px 0 10px;
+  font-size: 15px;
+}
+.mode-list { display: flex; flex-direction: column; gap: 12px; }
+.mode-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  text-align: left;
+  background: linear-gradient(135deg, var(--panel), var(--bg-2));
+  border-left: 4px solid var(--accent-2);
+}
+.mode-btn.timeattack { border-left-color: var(--accent); }
+.mode-name { font-size: 19px; font-weight: 700; }
+.mode-desc { font-size: 13px; color: var(--muted); }
+.hint {
+  text-align: center;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 8px;
+}
+
+/* --- 行選択 --- */
+.subtitle { text-align: center; font-size: 22px; margin: 0 0 8px; }
+.group-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.group-btn { font-size: 20px; font-weight: 700; padding: 18px 0; }
+.group-all-btn {
+  margin-top: 6px;
+  background: var(--accent-2);
+  color: #06243a;
+  font-weight: 700;
+}
+
+/* --- プレイ --- */
+.play-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 0;
+}
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-size: 22px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  cursor: pointer;
+}
+.guide-btn { opacity: .4; }
+.guide-btn.on { opacity: 1; background: rgba(255,179,64,.2); }
+.play-mode-label { font-size: 15px; color: var(--muted); }
+
+.timer-wrap { text-align: center; margin-bottom: 4px; }
+.timer-label { font-size: 12px; color: var(--muted); margin-right: 6px; }
+.timer { font-size: 28px; font-weight: 800; color: var(--accent); font-variant-numeric: tabular-nums; }
+
+.prompt-area {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 90px;
+}
+.prompt {
+  font-size: 46px;
+  font-weight: 700;
+  letter-spacing: 4px;
+  text-align: center;
+  transition: transform .1s ease;
+}
+.prompt.hit { animation: pop .18s ease; }
+.prompt.miss { animation: nope .25s ease; }
+@keyframes pop { 50% { transform: scale(1.08); } }
+@keyframes nope { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)} }
+.ch { color: var(--muted); padding: 0 1px; }
+.ch.done { color: var(--good); }
+.ch.cur { color: var(--text); border-bottom: 4px solid var(--accent); }
+
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.stat {
+  background: var(--bg-2);
+  border-radius: 10px;
+  padding: 8px 4px;
+  text-align: center;
+}
+.stat-label { display: block; font-size: 10px; color: var(--muted); }
+.stat-val { display: block; font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+/* --- キーボード --- */
+.keyboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 8px;
+  padding-bottom: 8px;
+  aspect-ratio: 3 / 4;
+  max-height: 46dvh;
+}
+.keyboard.shake { animation: kbshake .25s ease; }
+@keyframes kbshake { 0%,100%{transform:translateX(0)} 30%{transform:translateX(-6px)} 60%{transform:translateX(6px)} }
+
+.key {
+  position: relative;
+  background: var(--key);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+.key-blank { background: transparent; pointer-events: none; }
+.key.pressed { background: var(--key-press); }
+.key.guide {
+  box-shadow: 0 0 0 3px var(--accent), 0 0 16px rgba(255,179,64,.5);
+  animation: guidePulse 1.2s ease-in-out infinite;
+}
+@keyframes guidePulse { 50% { box-shadow: 0 0 0 3px var(--accent), 0 0 24px rgba(255,179,64,.8); } }
+
+/* ガイドの方向を示す矢印 */
+.key.guide::after {
+  content: '';
+  position: absolute;
+  font-size: 20px;
+  color: var(--accent);
+}
+.key.guide[data-guide-dir="up"]::after    { content:'▲'; top: 2px; }
+.key.guide[data-guide-dir="down"]::after  { content:'▼'; bottom: 2px; }
+.key.guide[data-guide-dir="left"]::after  { content:'◀'; left: 4px; }
+.key.guide[data-guide-dir="right"]::after { content:'▶'; right: 4px; }
+.key.guide[data-guide-dir="center"]::after { content:'●'; font-size: 12px; opacity:.7; }
+
+/* フリックポップアップ（押下中に方向候補を表示） */
+.flick-popup {
+  position: absolute;
+  inset: -50% -10%;
+  pointer-events: none;
+  display: none;
+  z-index: 10;
+}
+.key.show-popup .flick-popup { display: block; }
+.flick-seg {
+  position: absolute;
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-2);
+  border-radius: 10px;
+  font-size: 24px;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(0,0,0,.4);
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.flick-center { }
+.flick-up    { transform: translate(-50%, -130%); }
+.flick-down  { transform: translate(-50%, 30%); }
+.flick-left  { transform: translate(-130%, -50%); }
+.flick-right { transform: translate(30%, -50%); }
+.flick-seg.active {
+  background: var(--accent);
+  color: #2a1a00;
+  transform: translate(-50%, -50%) scale(1.12);
+}
+.flick-seg.flick-up.active    { transform: translate(-50%, -130%) scale(1.12); }
+.flick-seg.flick-down.active  { transform: translate(-50%, 30%) scale(1.12); }
+.flick-seg.flick-left.active  { transform: translate(-130%, -50%) scale(1.12); }
+.flick-seg.flick-right.active { transform: translate(30%, -50%) scale(1.12); }
+
+/* --- 結果 --- */
+.rank {
+  font-size: 90px;
+  font-weight: 900;
+  text-align: center;
+  line-height: 1;
+  margin: 6px 0;
+  color: var(--accent);
+}
+.rank[data-rank="S"] { color: #ffd54f; text-shadow: 0 0 20px rgba(255,213,79,.6); }
+.rank[data-rank="A"] { color: #4fc3f7; }
+.rank[data-rank="B"] { color: #81c784; }
+.rank[data-rank="C"] { color: #ffb74d; }
+.rank[data-rank="D"] { color: var(--muted); }
+.new-record { text-align: center; color: var(--accent); font-weight: 700; margin: 0; }
+.result-mode-label { text-align: center; color: var(--muted); margin: 0; }
+.result-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+}
+.rstat {
+  background: var(--bg-2);
+  border-radius: 12px;
+  padding: 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.rstat span { color: var(--muted); font-size: 14px; }
+.rstat b { font-size: 22px; font-variant-numeric: tabular-nums; }
+.primary-btn {
+  background: var(--accent);
+  color: #2a1a00;
+  font-weight: 700;
+  margin-top: 8px;
+}
