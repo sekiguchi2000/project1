@@ -13,31 +13,43 @@ class FlickKeyboard {
     this._build();
   }
 
-  // 実機のかな入力配列（5列×4行）。中央3列が文字キー、左右が機能キー。
+  // Gboard(Android)風のかな入力配列（5列×4行）。中央3列が文字キー、左右が機能キー。
   // 機能キーは見た目だけ（反応しない）。'mod'(小゛゜)と文字キーのみ動作する。
   static LAYOUT = [
-    ['next',  'a',   'ka', 'sa',   'del'],
-    ['face',  'ta',  'na', 'ha',   'space'],
-    ['abc',   'ma',  'ya', 'ra',   'enter'],
+    ['sym',   'a',   'ka', 'sa',   'del'],
+    ['abc',   'ta',  'na', 'ha',   'henkan'],
+    ['aA1',   'ma',  'ya', 'ra',   'space'],
     ['globe', 'mod', 'wa', 'mark', 'enter'],
   ];
   static FN = {
-    next:  { t: '次候補' },
-    del:   { t: '⌫' },
-    face:  { t: '☺' },
-    space: { t: '空白' },
-    abc:   { t: '英数' },
-    globe: { t: '🌐' },
-    enter: { t: '改行', enter: true },
+    sym:    { t: '☆123' },
+    del:    { t: '⌫' },
+    abc:    { t: 'ABC' },
+    henkan: { t: '変換' },
+    aA1:    { t: 'あA1' },
+    space:  { t: '空白' },
+    globe:  { t: '🌐' },
+    enter:  { t: '⏎', cls: 'key-enter' },
   };
 
   _build() {
     this.root.innerHTML = '';
     this.root.classList.add('keyboard');
+
+    // Gboard風ツールバー（装飾・反応しない）
+    const bar = document.createElement('div');
+    bar.className = 'kb-toolbar';
+    bar.innerHTML = '<span class="kb-g">G</span>'
+      + '<span class="kb-tool">🔍</span><span class="kb-tool">GIF</span>'
+      + '<span class="kb-tool">😀</span><span class="kb-tool">⚙️</span>'
+      + '<span class="kb-tool kb-more">⋯</span>';
+    this.root.appendChild(bar);
+
+    const grid = document.createElement('div');
+    grid.className = 'key-grid';
     const byId = {};
     for (const k of FLICK_KEYS) byId[k.id] = k;
 
-    const placed = {};
     FlickKeyboard.LAYOUT.forEach((row, r) => {
       row.forEach((id, c) => {
         const key = byId[id];
@@ -45,23 +57,20 @@ class FlickKeyboard {
           const cell = this._makeKeyCell(key);
           cell.style.gridColumn = String(c + 1);
           cell.style.gridRow = String(r + 1);
-          this.root.appendChild(cell);
+          grid.appendChild(cell);
           return;
         }
         const fn = FlickKeyboard.FN[id];
         if (!fn) return;
-        if (fn.enter) {
-          if (placed.enter) return;
-          placed.enter = true;
-        }
         const cell = document.createElement('div');
-        cell.className = 'key key-fn' + (fn.enter ? ' key-enter' : '');
+        cell.className = 'key key-fn' + (fn.cls ? ' ' + fn.cls : '');
         cell.textContent = fn.t;
         cell.style.gridColumn = String(c + 1);
-        cell.style.gridRow = fn.enter ? `${r + 1} / span 2` : String(r + 1);
-        this.root.appendChild(cell);
+        cell.style.gridRow = String(r + 1);
+        grid.appendChild(cell);
       });
     });
+    this.root.appendChild(grid);
   }
 
   _makeKeyCell(key) {
