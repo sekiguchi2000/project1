@@ -3,101 +3,180 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <meta name="theme-color" content="#1b2030">
+  <meta name="theme-color" content="#ffb3c8">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <title>フリックマスター｜フリック入力練習</title>
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <title>フリックぼうけん｜たのしくフリック入力</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <!-- マスコット(モモ)のSVGテンプレート -->
+  <template id="mascot-svg">
+    <svg class="mascot-svg" viewBox="0 0 120 120" aria-hidden="true">
+      <ellipse class="m-shadow" cx="60" cy="104" rx="34" ry="8"/>
+      <path class="m-body" d="M60 16 C92 16 100 56 100 78 C100 100 82 110 60 110 C38 110 20 100 20 78 C20 56 28 16 60 16 Z"/>
+      <ellipse class="m-cheek" cx="38" cy="74" rx="8" ry="6"/>
+      <ellipse class="m-cheek" cx="82" cy="74" rx="8" ry="6"/>
+      <!-- 目: ぱっちり -->
+      <g class="m-eyes-open">
+        <circle cx="44" cy="62" r="9" fill="#fff"/><circle cx="76" cy="62" r="9" fill="#fff"/>
+        <circle cx="45" cy="64" r="5.5" fill="#2c2c3a"/><circle cx="77" cy="64" r="5.5" fill="#2c2c3a"/>
+        <circle cx="42" cy="60" r="2" fill="#fff"/><circle cx="74" cy="60" r="2" fill="#fff"/>
+      </g>
+      <!-- 目: にこっ(閉じ) -->
+      <g class="m-eyes-happy">
+        <path d="M37 64 Q44 56 51 64" /><path d="M69 64 Q76 56 83 64" />
+      </g>
+      <!-- 目: ><(こまり) -->
+      <g class="m-eyes-hurt">
+        <path d="M38 58 L50 66 M50 58 L38 66"/><path d="M70 58 L82 66 M82 58 L70 66"/>
+      </g>
+      <path class="m-mouth-smile" d="M50 82 Q60 92 70 82"/>
+      <path class="m-mouth-open" d="M50 82 Q60 98 70 82 Q60 90 50 82 Z"/>
+      <path class="m-mouth-hurt" d="M50 88 Q55 82 60 88 Q65 94 70 88"/>
+    </svg>
+  </template>
+
   <div id="app">
 
-    <!-- ホーム -->
-    <section id="screen-home" class="screen">
-      <div class="home-inner">
-        <h1 class="logo">フリック<span>マスター</span></h1>
-        <p class="tagline">遊びながら、フリック入力を覚えよう</p>
-        <div class="mode-list">
-          <button class="btn mode-btn" data-mode="basic">
-            <span class="mode-name">基礎れんしゅう</span>
-            <span class="mode-desc">行を選んでガイドつきで練習</span>
-          </button>
-          <button class="btn mode-btn" data-mode="random">
-            <span class="mode-name">ランダム文字</span>
-            <span class="mode-desc">全文字からランダム出題</span>
-          </button>
-          <button class="btn mode-btn" data-mode="words">
-            <span class="mode-name">ことば</span>
-            <span class="mode-desc">単語を入力する実戦練習</span>
-          </button>
-          <button class="btn mode-btn timeattack" data-mode="timeattack">
-            <span class="mode-name">タイムアタック</span>
-            <span class="mode-desc">60秒で高スコアを狙え！</span>
-          </button>
+    <!-- ===== ホーム ===== -->
+    <section id="screen-home" class="screen active">
+      <div class="home-scroll">
+        <button id="mute-btn" class="mute-btn" aria-label="音">🔊</button>
+        <h1 class="logo">フリック<span>ぼうけん</span></h1>
+
+        <div class="player-card">
+          <div class="mascot-slot mascot-home" data-mood="happy"></div>
+          <div class="player-info">
+            <div class="lvl-row"><span class="lvl-badge">Lv.<b id="home-level">1</b></span><span id="home-coins" class="coins">🪙 0</span></div>
+            <div class="xp-bar"><div id="home-xp-fill" class="xp-fill"></div></div>
+            <div class="xp-text"><span id="home-xp-text">0 / 20</span></div>
+          </div>
         </div>
-        <p class="hint">キーを押して上下左右にフリック。指を離した方向の文字が入力されます。</p>
+
+        <button class="btn adventure-btn" data-go="stages">
+          <span class="adv-emoji">⚔️</span>
+          <span class="adv-text"><b>ぼうけんモード</b><small>モンスターをたおして レベルアップ！</small></span>
+        </button>
+
+        <p class="section-title">れんしゅうモード</p>
+        <div class="mode-grid">
+          <button class="btn mode-btn" data-mode="basic"><b>きそ</b><small>行べつ・ガイドつき</small></button>
+          <button class="btn mode-btn" data-mode="random"><b>ランダム</b><small>腕だめし</small></button>
+          <button class="btn mode-btn" data-mode="words"><b>ことば</b><small>単語入力</small></button>
+          <button class="btn mode-btn" data-mode="timeattack"><b>タイム</b><small>60秒勝負</small></button>
+        </div>
+        <p class="hint">キーを押して上下左右にフリック。「小゛゜」で濁点・小書きに変換できるよ。</p>
       </div>
     </section>
 
-    <!-- 行選択 -->
+    <!-- ===== ステージ選択 ===== -->
+    <section id="screen-stages" class="screen">
+      <header class="sub-header">
+        <button class="icon-btn" data-go="home">←</button>
+        <span class="sub-title">ぼうけんマップ</span>
+        <span class="lvl-badge small">Lv.<b id="stages-level">1</b></span>
+      </header>
+      <div id="stage-list" class="stage-list"></div>
+    </section>
+
+    <!-- ===== 行選択(きそ) ===== -->
     <section id="screen-group" class="screen">
-      <div class="home-inner">
-        <h2 class="subtitle">どの行をれんしゅうする？</h2>
+      <header class="sub-header">
+        <button class="icon-btn" data-go="home">←</button>
+        <span class="sub-title">どの行をれんしゅう？</span><span></span>
+      </header>
+      <div class="group-wrap">
         <div id="group-grid" class="group-grid"></div>
         <button id="group-all" class="btn group-all-btn">ぜんぶ（あ〜わ行）</button>
       </div>
     </section>
 
-    <!-- プレイ -->
+    <!-- ===== アーケード プレイ ===== -->
     <section id="screen-play" class="screen">
       <header class="play-header">
-        <button id="quit-btn" class="icon-btn" aria-label="やめる">✕</button>
+        <button class="icon-btn quit" data-go="home">✕</button>
         <span id="play-mode-label" class="play-mode-label"></span>
-        <button id="guide-toggle" class="icon-btn guide-btn" aria-label="ガイド切替">💡</button>
+        <button id="guide-toggle" class="icon-btn guide-btn">💡</button>
       </header>
-
       <div id="timer-wrap" class="timer-wrap" hidden>
-        <span class="timer-label">のこり</span>
-        <span id="timer" class="timer">60.0</span>
+        <span class="timer-label">のこり</span><span id="timer" class="timer">60.0</span>
       </div>
-
-      <div class="prompt-area">
-        <div id="prompt" class="prompt"></div>
-      </div>
-
+      <div class="prompt-area"><div id="prompt" class="prompt"></div></div>
       <div class="stats-bar">
         <div class="stat"><span class="stat-label">スコア</span><span id="stat-score" class="stat-val">0</span></div>
         <div class="stat"><span class="stat-label">コンボ</span><span id="stat-combo" class="stat-val">0</span></div>
         <div class="stat"><span class="stat-label">正確率</span><span id="stat-accuracy" class="stat-val">100%</span></div>
         <div class="stat"><span class="stat-label">文字/分</span><span id="stat-cpm" class="stat-val">0</span></div>
       </div>
-
-      <div id="keyboard" class="keyboard"></div>
+      <div id="play-kb" class="kb-slot"></div>
     </section>
 
-    <!-- 結果 -->
+    <!-- ===== RPG バトル ===== -->
+    <section id="screen-rpg" class="screen">
+      <header class="play-header">
+        <button class="icon-btn quit" data-go="stages">✕</button>
+        <span id="rpg-stage-name" class="play-mode-label"></span>
+        <span id="rpg-progress" class="progress-pill">1/4</span>
+      </header>
+
+      <div id="rpg-arena" class="rpg-arena">
+        <div id="rpg-fx" class="rpg-fx"></div>
+        <div class="monster-box">
+          <div id="rpg-monster" class="monster-emoji">🟢</div>
+          <div class="monster-meta">
+            <span id="rpg-monster-name" class="monster-name">スライム</span>
+            <div class="mhp-bar"><div id="rpg-mhp" class="mhp-fill"></div></div>
+            <div class="atk-bar"><div id="rpg-atk" class="atk-fill"></div></div>
+          </div>
+        </div>
+        <div id="rpg-speech" class="speech" hidden></div>
+      </div>
+
+      <div class="prompt-area rpg-prompt-area"><div id="rpg-prompt" class="prompt"></div></div>
+
+      <div class="player-bar">
+        <div class="mascot-slot mascot-battle" data-mood="idle"></div>
+        <div class="php-wrap">
+          <div class="php-top"><span class="lvl-badge small">Lv.<b id="rpg-level">1</b></span><span id="rpg-php-text">52/52</span></div>
+          <div class="php-bar"><div id="rpg-php" class="php-fill"></div></div>
+        </div>
+      </div>
+
+      <div id="rpg-kb" class="kb-slot"></div>
+    </section>
+
+    <!-- ===== 結果（共通） ===== -->
     <section id="screen-result" class="screen">
       <div class="result-inner">
-        <h2 class="subtitle">けっか</h2>
-        <div id="result-rank" class="rank">A</div>
+        <div class="mascot-slot mascot-result" data-mood="happy"></div>
+        <h2 id="result-title" class="result-title">けっか</h2>
+        <div id="result-rank" class="rank" hidden>A</div>
         <p id="result-new" class="new-record" hidden>🎉 ハイスコア更新！</p>
-        <p class="result-mode-label"><span id="result-mode"></span></p>
-        <div class="result-grid">
-          <div class="rstat"><span>スコア</span><b id="result-score">0</b></div>
-          <div class="rstat"><span>ベスト</span><b id="result-best">0</b></div>
-          <div class="rstat"><span>正確率</span><b id="result-accuracy">0%</b></div>
-          <div class="rstat"><span>文字/分</span><b id="result-cpm">0</b></div>
-          <div class="rstat"><span>最大コンボ</span><b id="result-maxcombo">0</b></div>
-          <div class="rstat"><span>ミス</span><b id="result-mistakes">0</b></div>
+        <div id="result-levelup" class="levelup-banner" hidden>⭐ レベルアップ！ Lv.<b id="result-newlevel">2</b></div>
+        <div id="result-grid" class="result-grid"></div>
+        <div class="result-actions">
+          <button id="result-again" class="btn primary-btn">もういちど</button>
+          <button id="result-home" class="btn ghost-btn" data-go="home">ホーム</button>
         </div>
-        <button id="retry-btn" class="btn primary-btn">ホームへ</button>
       </div>
     </section>
 
   </div>
 
   <script src="js/kana.js"></script>
+  <script src="js/sound.js"></script>
+  <script src="js/storage.js"></script>
   <script src="js/flick-keyboard.js"></script>
   <script src="js/game.js"></script>
+  <script src="js/rpg.js"></script>
   <script src="js/main.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+    }
+  </script>
 </body>
 </html>
