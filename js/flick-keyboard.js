@@ -13,40 +13,86 @@ class FlickKeyboard {
     this._build();
   }
 
+  // 実機のかな入力配列（5列×4行）。中央3列が文字キー、左右が機能キー。
+  // 機能キーは見た目だけ（反応しない）。'mod'(小゛゜)と文字キーのみ動作する。
+  static LAYOUT = [
+    ['next',  'a',   'ka', 'sa',   'del'],
+    ['face',  'ta',  'na', 'ha',   'space'],
+    ['abc',   'ma',  'ya', 'ra',   'enter'],
+    ['globe', 'mod', 'wa', 'mark', 'enter'],
+  ];
+  static FN = {
+    next:  { t: '次候補' },
+    del:   { t: '⌫' },
+    face:  { t: '☺' },
+    space: { t: '空白' },
+    abc:   { t: '英数' },
+    globe: { t: '🌐' },
+    enter: { t: '改行', enter: true },
+  };
+
   _build() {
     this.root.innerHTML = '';
     this.root.classList.add('keyboard');
+    const byId = {};
+    for (const k of FLICK_KEYS) byId[k.id] = k;
 
-    for (const key of FLICK_KEYS) {
-      const cell = document.createElement('div');
-      cell.className = 'key';
-      cell.dataset.keyId = key.id;
-      if (key.isModifier) cell.classList.add('key-mod');
-
-      const main = document.createElement('span');
-      main.className = 'key-main';
-      main.textContent = key.center;
-      cell.appendChild(main);
-
-      if (!key.isModifier) {
-        const popup = document.createElement('div');
-        popup.className = 'flick-popup';
-        for (const dir of ['up', 'down', 'left', 'right', 'center']) {
-          const ch = dir === 'center' ? key.center : key.flicks[dir];
-          if (!ch) continue;
-          const seg = document.createElement('span');
-          seg.className = 'flick-seg flick-' + dir;
-          seg.textContent = ch;
-          seg.dataset.dir = dir;
-          popup.appendChild(seg);
+    const placed = {};
+    FlickKeyboard.LAYOUT.forEach((row, r) => {
+      row.forEach((id, c) => {
+        const key = byId[id];
+        if (key) {
+          const cell = this._makeKeyCell(key);
+          cell.style.gridColumn = String(c + 1);
+          cell.style.gridRow = String(r + 1);
+          this.root.appendChild(cell);
+          return;
         }
-        cell.appendChild(popup);
-      }
+        const fn = FlickKeyboard.FN[id];
+        if (!fn) return;
+        if (fn.enter) {
+          if (placed.enter) return;
+          placed.enter = true;
+        }
+        const cell = document.createElement('div');
+        cell.className = 'key key-fn' + (fn.enter ? ' key-enter' : '');
+        cell.textContent = fn.t;
+        cell.style.gridColumn = String(c + 1);
+        cell.style.gridRow = fn.enter ? `${r + 1} / span 2` : String(r + 1);
+        this.root.appendChild(cell);
+      });
+    });
+  }
 
-      this.keyEls[key.id] = cell;
-      this._bindPointer(cell, key);
-      this.root.appendChild(cell);
+  _makeKeyCell(key) {
+    const cell = document.createElement('div');
+    cell.className = 'key';
+    cell.dataset.keyId = key.id;
+    if (key.isModifier) cell.classList.add('key-mod');
+
+    const main = document.createElement('span');
+    main.className = 'key-main';
+    main.textContent = key.center;
+    cell.appendChild(main);
+
+    if (!key.isModifier) {
+      const popup = document.createElement('div');
+      popup.className = 'flick-popup';
+      for (const dir of ['up', 'down', 'left', 'right', 'center']) {
+        const ch = dir === 'center' ? key.center : key.flicks[dir];
+        if (!ch) continue;
+        const seg = document.createElement('span');
+        seg.className = 'flick-seg flick-' + dir;
+        seg.textContent = ch;
+        seg.dataset.dir = dir;
+        popup.appendChild(seg);
+      }
+      cell.appendChild(popup);
     }
+
+    this.keyEls[key.id] = cell;
+    this._bindPointer(cell, key);
+    return cell;
   }
 
   _bindPointer(cell, key) {
